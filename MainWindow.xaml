@@ -1,0 +1,135 @@
+﻿<Window x:Class="Rule.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:Rule"
+        Title="MainWindow" Height="70" Width="800" WindowStyle="None" ResizeMode="NoResize"
+        FocusManager.FocusedElement="{Binding RelativeSource={x:Static RelativeSource.Self}, Mode=OneTime}" Topmost="True">
+    
+    <Window.Resources>
+        <local:OrientationChooser x:Key="OrientationChooser"/>
+        
+        <Color x:Key="woodColor">#FF643B24</Color>
+        <SolidColorBrush x:Key="woodBrush" Color="{StaticResource woodColor}"/>
+        <SolidColorBrush x:Key="woodHighlightBrush" Color="Wheat" Opacity="0.7"/>
+
+        <Style x:Key="buttonStroke" TargetType="Line">
+            <Setter Property="StrokeStartLineCap" Value="Round"/>
+            <Setter Property="StrokeEndLineCap" Value="Round"/>
+            <Setter Property="StrokeThickness" Value="3"/>
+            <Setter Property="Stroke" Value="{StaticResource woodBrush}"/>
+        </Style>
+
+        <Style x:Key="buttonHighlightBorder" TargetType="Border">
+            <Setter Property="BorderBrush" Value="{StaticResource woodBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="{StaticResource woodHighlightBrush}"/>
+        </Style>
+
+        <Style TargetType="Button">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid>
+                            <Border x:Name="highlight" Style="{StaticResource buttonHighlightBorder}" Opacity="0"/>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="highlight" Property="Opacity" Value="1"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="visibleIfHorizontal" TargetType="FrameworkElement">
+            <Setter Property="Visibility" Value="Visible"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Orientation}" Value="Vertical">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="visibleIfVertical" TargetType="FrameworkElement">
+            <Setter Property="Visibility" Value="Visible"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Orientation}" Value="Horizontal">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <RoutedUICommand x:Key="ToggleOrientationCommand" Text="Toggle Orientation"/>
+    </Window.Resources>
+
+    <Window.CommandBindings>
+        <CommandBinding Command="{StaticResource ToggleOrientationCommand}" Executed="ToggleOrientation"/>
+        <CommandBinding Command="Close" Executed="Quit"/>
+    </Window.CommandBindings>
+
+    <Border BorderBrush="{StaticResource woodBrush}" MouseDown="Grid_MouseDown" ClipToBounds="True"
+            PreviewMouseMove="Grid_PreviewMouseMove"
+            BorderThickness="{Binding Orientation, Converter={StaticResource OrientationChooser}, ConverterParameter='1,1,1,0|0,1,1,1'}">
+        <Border.Style>
+            <Style TargetType="Border">
+                <Setter Property="Background">
+                    <Setter.Value>
+                        <ImageBrush ImageSource="Images/woodTexture-horizontal.png"
+                                    Stretch="None" ViewportUnits="Absolute" Viewport="0,0,425,425" TileMode="Tile"/>
+                    </Setter.Value>
+                </Setter>
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding Orientation}" Value="Vertical">
+                        <Setter Property="Background">
+                            <Setter.Value>
+                                <ImageBrush ImageSource="Images/woodTexture-vertical.png"
+                                            Stretch="None" ViewportUnits="Absolute" Viewport="0,0,425,425" TileMode="Tile"/>
+                            </Setter.Value>
+                        </Setter>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </Border.Style>
+
+        <Border.ContextMenu>
+            <ContextMenu>
+                <MenuItem Header="Flip horizontal/vertical" Command="{StaticResource ToggleOrientationCommand}"/>
+                <Separator/>
+                <MenuItem Header="Quit" Command="Close"/>
+            </ContextMenu>
+        </Border.ContextMenu>
+
+        <Grid x:Name="grid" ToolTipService.InitialShowDelay="0">
+            <Grid.ToolTip>
+                <ToolTip x:Name="tooltip" Placement="Relative" PlacementTarget="{Binding RelativeSource={RelativeSource Self}}"
+                         Content="{Binding PlacementTarget.DataContext.MousePosition, RelativeSource={RelativeSource Self}}"/>
+            </Grid.ToolTip>
+
+            <local:Axis Foreground="{StaticResource woodBrush}" FontSize="16" FontWeight="SemiBold"
+                        ToothSize="10" MinorTickSize="11" MajorTickSize="27" Orientation="{Binding Orientation}"
+                        Margin="{Binding Orientation, Converter={StaticResource OrientationChooser}, ConverterParameter='-2,0,0,0|0,-2,0,0'}"/>
+
+            <local:Needle x:Name="needle" Foreground="Firebrick" FontSize="16" FontWeight="SemiBold"
+                        Orientation="{Binding Orientation}" ToothSize="10" NeedleSize="30" 
+                        Margin="{Binding Orientation, Converter={StaticResource OrientationChooser}, ConverterParameter='-2,0,0,0|0,-2,0,0'}"/>
+
+            <local:ResizeHandle HorizontalAlignment="Left" Width="10" ResizerPosition="Left" Style="{StaticResource visibleIfHorizontal}"/>
+            <local:ResizeHandle HorizontalAlignment="Right" Width="10" ResizerPosition="Right" Style="{StaticResource visibleIfHorizontal}"/>
+
+            <local:ResizeHandle VerticalAlignment="Top" Height="10" ResizerPosition="Top" Style="{StaticResource visibleIfVertical}"/>
+            <local:ResizeHandle VerticalAlignment="Bottom" Height="10" ResizerPosition="Bottom" Style="{StaticResource visibleIfVertical}"/>
+
+            <StackPanel Orientation="{Binding Orientation, Converter={StaticResource OrientationChooser}, ConverterParameter='Horizontal|Vertical'}"
+                        VerticalAlignment="Top" HorizontalAlignment="Right" FlowDirection="RightToLeft">
+                <Button  ToolTip="Quit" Command="Close" Width="20" Height="20" >
+                    <Image Source="Images/close.png" Stretch="None"/>
+                </Button>
+                <Button ToolTip="Flip" Command="{StaticResource ToggleOrientationCommand}" Width="20" Height="20">
+                    <Image Source="Images/orientation.png" Stretch="None"/>
+                </Button>
+            </StackPanel>
+        </Grid>
+    </Border>
+</Window>

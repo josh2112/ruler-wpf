@@ -1,0 +1,12 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Rule.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="WindowRect" Type="System.Windows.Rect" Scope="User">
+      <Value Profile="(Default)">Empty</Value>
+    </Setting>
+    <Setting Name="Orientation" Type="System.Windows.Controls.Orientation" Scope="User">
+      <Value Profile="(Default)">Horizontal</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
