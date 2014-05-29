@@ -8,3 +8,4 @@ Featues:
  - Resize from either end
  - Always on top
  
+See the Releases tab for Windows binaries.
