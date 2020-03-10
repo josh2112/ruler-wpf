@@ -14,9 +14,6 @@ en.depinstall_error=An error occured while installing the dependencies. Please r
 en.isxdl_langfile=
 
 
-[Files]
-Source: "scripts\isxdl\german2.ini"; Flags: dontcopy
-
 [Code]
 type
 	TProduct = record

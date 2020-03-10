@@ -11,6 +11,7 @@ DefaultGroupName=Josh2112 Apps
 UninstallDisplayIcon={app}\Rule.exe
 Compression=lzma2
 SolidCompression=yes
+OutputBaseFilename="Rule-Setup"
 OutputDir=.
 
 [Languages]
